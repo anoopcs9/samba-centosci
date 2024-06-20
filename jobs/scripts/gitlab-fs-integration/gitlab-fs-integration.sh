@@ -16,9 +16,10 @@ dnf -y install git
 rm -rf tests
 mkdir tests
 cd tests
-git clone https://github.com/samba-in-kubernetes/sit-environment.git
+git clone --branch vfs-ceph-new https://github.com/anoopcs9/sit-environment.git
 cd sit-environment
 
+if [ -n "${gitlabMergeRequestIid}" ]; then
 cat << EOF > local.yml
 install:
   samba:
@@ -26,6 +27,15 @@ install:
       repo: ${gitlabTargetRepoHttpUrl}
       mr: ${gitlabMergeRequestIid}
 EOF
+else
+cat << EOF > local.yml
+install:
+  samba:
+    git:
+      repo: https://gitlab.com/synarete/samba.git
+      version: vfs_ceph_new
+EOF
+fi
 
 TEST_EXTRA_VARS="backend=${BACKEND}"
 
