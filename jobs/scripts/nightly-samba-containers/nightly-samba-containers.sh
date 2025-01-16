@@ -1,7 +1,7 @@
 #!/bin/bash
 
-CONTAINER_GIT_REPO="https://github.com/samba-in-kubernetes/samba-container"
-CONTAINER_GIT_BRANCH="master"
+CONTAINER_GIT_REPO="https://github.com/phlogistonjohn/samba-container"
+CONTAINER_GIT_BRANCH="jjm-build-img-next-2"
 CONTAINER_CMD=${CONTAINER_CMD:-podman}
 IMG_REGISTRY="quay.io"
 # Temporarily using John Mulligan's quay.io repository with a bot account until
