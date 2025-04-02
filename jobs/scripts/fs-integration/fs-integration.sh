@@ -5,7 +5,7 @@
 # and run the tests.
 
 GIT_REPO_NAME="sit-environment"
-GIT_REPO_URL="https://github.com/samba-in-kubernetes/${GIT_REPO_NAME}.git"
+GIT_REPO_URL="https://github.com/anoopcs9/${GIT_REPO_NAME}.git"
 GIT_TARGET_REPO="${GIT_REPO}"
 GIT_TARGET_REPO_URL="https://github.com/samba-in-kubernetes/${GIT_TARGET_REPO}.git"
 BACKEND="${FILE_SYSTEM:-glusterfs}"
@@ -26,7 +26,7 @@ dnf -y install git
 rm -rf tests
 mkdir tests
 cd tests
-git clone "${GIT_REPO_URL}"
+git clone --branch cephfs-default-disable-async-io "${GIT_REPO_URL}"
 cd "${GIT_REPO_NAME}"
 
 TEST_EXTRA_VARS="backend=${BACKEND}"
