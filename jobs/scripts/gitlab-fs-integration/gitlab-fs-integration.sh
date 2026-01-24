@@ -16,7 +16,7 @@ dnf -y install git
 rm -rf tests
 mkdir tests
 cd tests
-git clone https://github.com/samba-in-kubernetes/sit-environment.git
+git clone --branch cephfs-proxy-async-fsync https://github.com/anoopcs9/sit-environment.git
 cd sit-environment
 
 cat << EOF > local.yml
