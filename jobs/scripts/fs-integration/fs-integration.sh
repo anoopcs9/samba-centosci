@@ -63,18 +63,10 @@ fi
 # enable additional sources for dnf:
 dnf -y install epel-release epel-next-release
 
-dnf -y install make ansible-core
+dnf -y install make python3.14
 
-if [ "${CENTOS_VERSION}" -eq 8 ]; then
-	dnf -y install python3.12-pip
-	dnf -y install ansible-collection-ansible-posix \
-		ansible-collection-ansible-utils
-	pip3.12 install netaddr
-else
+if [ "${CENTOS_VERSION}" -gt 8 ]; then
 	dnf config-manager --set-enabled crb
-	dnf -y install python3-pip
-	ansible-galaxy collection install ansible.posix ansible.utils
-	pip3 install netaddr
 fi
 
 
@@ -133,10 +125,10 @@ set +e
 # https://bugzilla.redhat.com/show_bug.cgi?id=2337302
 export VAGRANT_SERVER_URL="https://vagrantcloud.com/api/v2/vagrant"
 
-EXTRA_VARS="${TEST_EXTRA_VARS}" make "${TEST_TARGET}"
+EXTRA_VARS="${TEST_EXTRA_VARS}" PYTHON="/usr/bin/python3.14" make "${TEST_TARGET}"
 ret=$?
 
-EXTRA_VARS="${TEST_EXTRA_VARS}" make statedump
+EXTRA_VARS="${TEST_EXTRA_VARS}" PYTHON="/usr/bin/python3.14" make statedump
 
 pushd /tmp
 find "sit_statedump" -name test.out -exec cp {} . \;
