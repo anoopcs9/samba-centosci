@@ -1,0 +1,21 @@
+- job:
+    name: samba_fs-integration-gitlab-pipeline
+    project-type: pipeline
+    description: Run GitLab MR integrations for clustered Samba.
+    concurrent: true
+
+    properties:
+      - gitlab:
+          connection: samba-upstream-gitlab
+      - build-discarder:
+          days-to-keep: 14
+          artifacts-days-to-keep: 14
+
+    pipeline-scm:
+      scm:
+        - git:
+            url: https://github.com/samba-in-kubernetes/samba-centosci.git
+            branches:
+              - '*/main'
+      script-path: jobs/pipelines/gitlab-fs-integration.Jenkinsfile
+      lightweight-checkout: true
