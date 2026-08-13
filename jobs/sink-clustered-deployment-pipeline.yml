@@ -1,0 +1,21 @@
+- job:
+    name: samba_sink-clustered-deployment-pipeline
+    project-type: pipeline
+    description: Run SINK clustered deployment tests in minikube (Pipeline).
+    concurrent: true
+
+    properties:
+      - github:
+          url: https://github.com/samba-in-kubernetes/samba-operator
+      - build-discarder:
+          days-to-keep: 7
+          artifacts-days-to-keep: 7
+
+    pipeline-scm:
+      scm:
+        - git:
+            url: https://github.com/samba-in-kubernetes/samba-centosci.git
+            branches:
+              - '*/main'
+      script-path: jobs/pipelines/sink-clustered-deployment.Jenkinsfile
+      lightweight-checkout: true
