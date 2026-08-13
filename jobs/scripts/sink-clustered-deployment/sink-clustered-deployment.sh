@@ -1,6 +1,9 @@
 #!/bin/bash
 
-SINK_OPERATOR_GIT_REPO="https://github.com/samba-in-kubernetes/samba-operator"
+PULL_REQUEST_ID="${PULL_REQUEST_ID:-${PULL_REQUEST_ID}}"
+TARGET_BRANCH="${TARGET_BRANCH:-${ghprbTargetBranch:-master}}"
+ACTUAL_COMMIT="${ACTUAL_COMMIT:-${sha1}}"
+SINK_OPERATOR_GIT_REPO="${BUILD_GIT_REPO:-https://github.com/samba-in-kubernetes/samba-operator}"
 SINK_OPERATOR_GIT_BRANCH=${SINK_OPERATOR_GIT_BRANCH:-"master"}
 
 CENTOS_VERSION="${CENTOS_VERSION//[!0-9]}"
@@ -30,18 +33,18 @@ git clone --depth=1 --branch="${SINK_OPERATOR_GIT_BRANCH}" "${SINK_OPERATOR_GIT_
 
 pushd samba-operator || exit 1
 
-if [ -n "${ghprbPullId}" ]; then
+if [ -n "${PULL_REQUEST_ID}" ]; then
 	# We have to fetch the whole target branch to be able to rebase.
 	git fetch --unshallow  origin
 
-	git fetch origin "pull/${ghprbPullId}/head:pr_${ghprbPullId}"
-	git checkout "pr_${ghprbPullId}"
+	git fetch origin "pull/${PULL_REQUEST_ID}/head:pr_${PULL_REQUEST_ID}"
+	git checkout "pr_${PULL_REQUEST_ID}"
 
-	git rebase "origin/${ghprbTargetBranch}"
+	git rebase "origin/${TARGET_BRANCH}"
 	ret=$?
 	if [ $ret -ne 0 ] ; then
 		echo "Unable to automatically rebase to \
-			branch '${ghprbTargetBranch}'. Please rebase your PR!"
+			branch '${TARGET_BRANCH}'. Please rebase your PR!"
 		exit 1
 	fi
 
@@ -49,7 +52,7 @@ if [ -n "${ghprbPullId}" ]; then
 				.github .gitignore .golangci.yaml .revive.toml \
 				.yamllint.yaml)
 
-	readarray FILES_CHANGED < <(git diff --name-only origin/"${ghprbTargetBranch}")
+	readarray FILES_CHANGED < <(git diff --name-only origin/"${TARGET_BRANCH}")
 
 	proceed=0
 	for i in "${FILES_CHANGED[@]}"
@@ -72,10 +75,10 @@ if [ -n "${ghprbPullId}" ]; then
 		exit 0
 	fi
 
-	CI_IMG_TAG="ci-k8s-${KUBE_VERSION}-pr${ghprbPullId}"
+	CI_IMG_TAG="ci-k8s-${KUBE_VERSION}-pr${PULL_REQUEST_ID}"
 	# if the sha1 hash is provided, we will try to append a short form of it to
 	# the tag to make the image unique to each "push" of the PR.
-	if [[ "$sha1" =~ ^[abcdef0-9]{4}[abcdef0-9]*$ ]]; then
+	if [[ "$ACTUAL_COMMIT" =~ ^[abcdef0-9]{4}[abcdef0-9]*$ ]]; then
 		shortsha="${sha1:0:8}"
 		CI_IMG_TAG="${CI_IMG_TAG}-${shortsha}"
 	fi
