@@ -1,6 +1,6 @@
 import groovy.json.JsonSlurper
 
-def K8S_VERSIONS = ['1.33', '1.32', 'latest']
+def K8S_VERSIONS = ['1.34', '1.35', 'latest']
 
 @NonCPS
 def matchCell(String eventType, String comment, String k8sVersion) {
